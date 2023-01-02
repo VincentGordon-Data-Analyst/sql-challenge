@@ -8,37 +8,41 @@ dept_name VARCHAR(20) NOT NULL
 CREATE TABLE dept_emp(
 emp_no INT NOT NULL,
 dept_no VARCHAR(20) NOT NULL,
-FOREIGN KEY (dept_no) REFERENCES departments(dept_no)
+FOREIGN KEY (dept_no) REFERENCES departments(dept_no),
+FOREIGN KEY (emp_no) REFERENCES employees(emp_no)
 );
 
 -- Create new table
 CREATE TABLE dept_manager(
 dept_no VARCHAR(20) NOT NULL,
 emp_no INT NOT NULL,
-FOREIGN KEY (dept_no) REFERENCES departments(dept_no)
+FOREIGN KEY (dept_no) REFERENCES departments(dept_no),
+FOREIGN KEY (emp_no) REFERENCES employees(emp_no)
 );
 
 -- Create new table
 CREATE TABLE employees(
-emp_no INT NOT NULL,
+emp_no INT PRIMARY KEY,
 emp_title_id VARCHAR(20) NOT NULL,
-birth_date VARCHAR(20) NOT NULL,
+birth_date DATE NOT NULL,
 first_name VARCHAR(30) NOT NULL,
 last_name VARCHAR(30) NOT NULL,
 sex CHAR(1) NOT NULL,
-hire_date VARCHAR(20) NOT NULL
+hire_date DATE NOT NULL
 );
 
 -- Create new table
 CREATE TABLE salaries(
 emp_no INT NOT NULL,
-salary INT NOT NULL
+salary INT NOT NULL,
+FOREIGN KEY (emp_no) REFERENCES employees(emp_no)
 );
 
 -- Create new table
 CREATE TABLE titles(
 title_id VARCHAR(20) NOT NULL,
-title VARCHAR(20) NOT NULL
+title VARCHAR(20) NOT NULL,
+FOREIGN KEY (title_id) REFERENCES employees(emp_titile_id)
 );
 
 
@@ -60,25 +64,25 @@ WHERE hire_date LIKE'%/%/1986';
 
 
 -- List the manager of each department along with their department number, department name, employee number, last name, and first name.
-SELECT departments.dept_no,
-	departments.dept_name,
-	dept_manager.emp_no,
-	employees.last_name,
-	employees.first_name
-FROM ((dept_manager
-INNER JOIN departments ON departments.dept_no = dept_manager.dept_no)
-INNER JOIN employees ON  employees.emp_no = dept_manager.emp_no);
+SELECT d.dept_no,
+	d.dept_name,
+	dm.emp_no,
+	e.last_name,
+	e.first_name
+FROM ((dept_manager AS dm
+INNER JOIN departments AS d ON d.dept_no = dm.dept_no)
+INNER JOIN employees AS e ON  e.emp_no = dm.emp_no);
 
 
 -- List the department number for each employee along with that employee’s employee number, last name, first name, and department name.
-SELECT departments.dept_no,
-	departments.dept_name,
-	dept_emp.emp_no,
-	employees.last_name,
-	employees.first_name
-FROM ((dept_emp
-INNER JOIN employees ON employees.emp_no = dept_emp.emp_no)
-INNER JOIN departments ON departments.dept_no = dept_emp.dept_no);
+SELECT d.dept_no,
+	d.dept_name,
+	de.emp_no,
+	e.last_name,
+	e.first_name
+FROM ((dept_emp AS de
+INNER JOIN employees AS e ON e.emp_no = de.emp_no)
+INNER JOIN departments AS d ON d.dept_no = de.dept_no);
 
 
 -- List first name, last name, and sex of each employee whose first name is Hercules and whose last name begins with the letter B.
@@ -89,24 +93,24 @@ AND first_name = 'Hercules';
 
 
 -- List each employee in the Sales department, including their employee number, last name, and first name.
-SELECT employees.first_name,
-	employees.last_name,
-	dept_emp.emp_no,
-	departments.dept_name
-FROM ((dept_emp
-INNER JOIN employees ON employees.emp_no = dept_emp.emp_no)
-INNER JOIN departments ON departments.dept_no = dept_emp.dept_no)
+SELECT e.first_name,
+	e.last_name,
+	de.emp_no,
+	d.dept_name
+FROM ((dept_emp AS de
+INNER JOIN employees AS e ON e.emp_no = de.emp_no)
+INNER JOIN departments AS d ON d.dept_no = de.dept_no)
 WHERE dept_name = 'Sales';
 
 
 -- List each employee in the Sales and Development departments, including their employee number, last name, first name, and department name.
-SELECT employees.last_name,
-	employees.first_name,
-	dept_emp.emp_no,
-	departments.dept_name
-FROM ((dept_emp
-INNER JOIN employees ON employees.emp_no = dept_emp.emp_no)
-INNER JOIN departments ON departments.dept_no = dept_emp.dept_no)
+SELECT e.last_name,
+	e.first_name,
+	de.emp_no,
+	d.dept_name
+FROM ((dept_emp AS de
+INNER JOIN employees AS e ON e.emp_no = de.emp_no)
+INNER JOIN departments AS d ON d.dept_no = de.dept_no)
 WHERE dept_name = 'Sales' OR dept_name = 'Development';
 
 
